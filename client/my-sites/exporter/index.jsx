@@ -8,19 +8,22 @@ import { compose } from 'lodash';
  * Internal dependencies
  */
 import Exporter from './exporter';
-import { toggleAdvancedSettings, toggleSection } from 'state/site-settings/exporter/actions';
+import { shouldShowProgress } from 'state/site-settings/exporter/selectors';
+import { toggleSection, startExport } from 'state/site-settings/exporter/actions';
 
-function mapStateToProps( state ) {
+function mapStateToProps( state, ownProps ) {
 	return {
+		site: ownProps.site,
 		advancedSettings: state.siteSettings.exporter.ui.toJS().advancedSettings,
-	}
+		shouldShowProgress: shouldShowProgress( state )
+	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return {
-		toggleAdvancedSettings: compose( dispatch, toggleAdvancedSettings ),
-		toggleSection: compose( dispatch, toggleSection )
-	}
+		toggleSection: compose( dispatch, toggleSection ),
+		startExport: () => startExport()( dispatch )
+	};
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )( Exporter );

@@ -9,15 +9,20 @@ import debugModule from 'debug';
  * Internal dependencies
  */
 import {
-	TOGGLE_EXPORTER_ADVANCED_SETTINGS,
-	TOGGLE_EXPORTER_SECTION
+	TOGGLE_EXPORTER_SECTION,
+	REQUEST_START_EXPORT,
+	REPLY_START_EXPORT,
+	FAIL_EXPORT,
+	COMPLETE_EXPORT
 } from 'state/action-types';
+
+import { States } from './constants';
 
 const debug = debugModule( 'calypso:exporter' );
 
 const initialUIState = Immutable.fromJS( {
+	exportingState: States.READY,
 	advancedSettings: {
-		isVisible: false,
 		posts: {
 			isEnabled: true
 		},
@@ -41,8 +46,16 @@ export function ui( state = initialUIState, action ) {
 	switch ( action.type ) {
 		case TOGGLE_EXPORTER_SECTION:
 			return state.updateIn( [ 'advancedSettings', action.section, 'isEnabled' ], ( x ) => ( !x ) );
-		case TOGGLE_EXPORTER_ADVANCED_SETTINGS:
-			return state.updateIn( [ 'advancedSettings', 'isVisible' ], ( x ) => ( !x ) );
+
+		case REQUEST_START_EXPORT:
+			return state.set( 'exportingState', States.STARTING );
+
+		case REPLY_START_EXPORT:
+			return state.set( 'exportingState', States.EXPORTING );
+
+		case FAIL_EXPORT:
+		case COMPLETE_EXPORT:
+			return state.set( 'exportingState', States.READY );
 	}
 
 	return state;
