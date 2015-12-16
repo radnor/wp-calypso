@@ -25,6 +25,16 @@ export default React.createClass( {
 		const { setPostType, startExport } = this.props;
 		const { postType, shouldShowProgress } = this.props;
 
+		const exportButton = (
+			<SpinnerButton
+				className="exporter__export-button"
+				loading={ shouldShowProgress }
+				isPrimary={ true }
+				onClick={ startExport }
+				text={ this.translate( 'Export All' ) }
+				loadingText={ this.translate( 'Exporting…' ) } />
+		);
+
 		return (
 			<div className="exporter">
 				<FoldableCard
@@ -39,15 +49,8 @@ export default React.createClass( {
 							</h2>
 						</div>
 					}
-					summary={
-						<SpinnerButton
-							className="exporter__export-button"
-							loading={ shouldShowProgress }
-							isPrimary={ true }
-							onClick={ startExport }
-							text={ this.translate( 'Export' ) }
-							loadingText={ this.translate( 'Exporting…' ) } />
-					}
+					summary={ exportButton }
+					expandedSummary={ exportButton }
 					>
 					<AdvancedSettings
 						postType={ postType }
