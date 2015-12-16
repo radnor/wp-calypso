@@ -15,23 +15,20 @@ export default React.createClass( {
 
 	propTypes: {
 		startExport: PropTypes.func.isRequired,
-		toggleSection: PropTypes.func.isRequired,
+		setPostType: PropTypes.func.isRequired,
 
 		shouldShowProgress: PropTypes.bool.isRequired,
-		advancedSettings: PropTypes.shape( {
-			posts: PropTypes.object,
-			pages: PropTypes.object,
-			feedback: PropTypes.object
-		} ).isRequired
+		postType: PropTypes.string
 	},
 
 	render: function() {
-		const { toggleSection, startExport } = this.props;
-		const { advancedSettings, shouldShowProgress } = this.props;
+		const { setPostType, startExport } = this.props;
+		const { postType, shouldShowProgress } = this.props;
 
 		return (
 			<div className="exporter">
 				<FoldableCard
+					actionButtonIcon="cog"
 					header={
 						<div>
 							<h1 className="exporter__title">
@@ -53,9 +50,9 @@ export default React.createClass( {
 					}
 					>
 					<AdvancedSettings
-						{ ...advancedSettings }
+						postType={ postType }
 						shouldShowProgress={ shouldShowProgress }
-						onToggleFieldset={ toggleSection }
+						onSelectPostType={ setPostType }
 						onClickExport={ startExport }
 					/>
 				</FoldableCard>

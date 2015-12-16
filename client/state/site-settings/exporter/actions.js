@@ -5,7 +5,7 @@ import notices from 'notices';
 import i18n from 'lib/mixins/i18n';
 
 import {
-	TOGGLE_EXPORTER_SECTION,
+	SET_EXPORT_POST_TYPE,
 	REQUEST_START_EXPORT,
 	REPLY_START_EXPORT,
 	FAIL_EXPORT,
@@ -13,15 +13,15 @@ import {
 } from 'state/action-types';
 
 /**
- * Toggles whether a section of the export is enabled.
+ * Sets the post type to export.
  *
- * @param  {Object} section   The name of the section to toggle - 'posts', 'pages', or 'feedback'
- * @return {Object}           Action object
+ * @param  {Object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
+ * @return {Object}            Action object
  */
-export function toggleSection( section ) {
+export function setPostType( postType ) {
 	return {
-		type: TOGGLE_EXPORTER_SECTION,
-		section
+		type: SET_EXPORT_POST_TYPE,
+		postType
 	};
 }
 
