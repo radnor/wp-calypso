@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-import React from "react";
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-import serviceConnections from "./service-connections";
-import Gridicon from "components/gridicon";
-import Button from "components/button";
-import classNames from "classnames";
+import serviceConnections from './service-connections';
+import Gridicon from 'components/gridicon';
+import Button from 'components/button';
+import classNames from 'classnames';
 
 module.exports = React.createClass( {
 	displayName: 'SharingServiceAction',
@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = [ 'sharing-service-action' ],
+		let classes = [ 'sharing-service-action' ],
 			primary = false,
 			borderless = false,
 			warning = false,
@@ -52,8 +52,7 @@ module.exports = React.createClass( {
 
 		if ( 'connected' === this.props.status ) {
 			removableConnections = serviceConnections.getRemovableConnections( this.props.service.name );
-			borderless = true;
-			icon = "link-break";
+			icon = 'cross';
 		}
 
 		if ( 'unknown' === this.props.status ) {
@@ -66,7 +65,7 @@ module.exports = React.createClass( {
 			warning = true;
 		} else if ( this.props.isConnecting ) {
 			label = this.translate( 'Connecting…', { context: 'Sharing: Publicize connect pending button label' } );
-			primary = true;
+
 		} else if ( 'connected' === this.props.status && removableConnections.length ) {
 			if ( removableConnections.length > 1 ) {
 				label = this.translate( 'Disconnect All', { context: 'Sharing: Publicize disconnect button label' } );
@@ -79,6 +78,7 @@ module.exports = React.createClass( {
 		} else {
 			label = this.translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' }  );
 			primary = true;
+			icon="plus-small"
 		}
 
 		return (
@@ -86,10 +86,13 @@ module.exports = React.createClass( {
 				primary={ primary }
 				borderless={ borderless }
 				scary={ warning }
+				compact
 				onClick={ this.onActionClick }
 				className={ classes.join( ' ' ) }
 				disabled={ isPending }>
-				{ label }
+				{ icon
+					? <Gridicon icon={ icon } />
+				 	: null } { label }
 			</Button>
 		);
 	}
