@@ -90,9 +90,7 @@ module.exports = React.createClass( {
 				onClick={ this.onActionClick }
 				className={ classes.join( ' ' ) }
 				disabled={ isPending }>
-				{ icon
-					? <Gridicon icon={ icon } />
-				 	: null } { label }
+				{ label }
 			</Button>
 		);
 	}
