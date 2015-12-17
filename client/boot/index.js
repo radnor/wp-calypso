@@ -303,7 +303,7 @@ function boot() {
 	require( 'my-sites' )();
 
 	if ( config.isEnabled( 'olark' ) ) {
-		require( 'lib/olark' );
+		page( '*', require( 'lib/olark' ).notifyLocation );
 	}
 
 	if ( config.isEnabled( 'keyboard-shortcuts' ) ) {

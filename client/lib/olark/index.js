@@ -18,6 +18,7 @@ import { isBusiness, isEnterprise } from 'lib/products-values';
 import olarkApi from 'lib/olark-api';
 import notices from 'notices';
 import olarkEvents from 'lib/olark-events';
+import olarkStore from 'lib/olark-store';
 import olarkActions from 'lib/olark-store/actions';
 import i18n from 'lib/mixins/i18n';
 
@@ -177,6 +178,9 @@ const olark = {
 		debug( 'Nickname: ' + visitorNickname );
 		debug( 'Group: ' + group );
 
+		// system.give_location_to_operator doesn't work well with our single page app so we do
+		// it our selves using page context in the notifyLocation function
+		olarkApi.configure( 'system.give_location_to_operator', false );
 		olarkApi.configure( 'system.chat_does_not_follow_external_links', true );
 		olarkApi.configure( 'system.mask_credit_cards', true );
 
@@ -368,8 +372,28 @@ const olark = {
 			this.userType = userType;
 			return true;
 		} );
+	},
+
+	notifyLocation( location ) {
+		const { details } = olarkStore.get();
+
+		if ( ! details.isConversing ) {
+			return;
+		}
+
+		olarkActions.sendNotificationToOperator( 'looking at ' + location );
 	}
 };
 
 emitter( olark );
 olark.initialize();
+
+export function notifyLocation( context, next ) {
+	// Use context.path here because window.location.href has the previous location and not what the new location will be.
+	const location = `${window.location.protocol}//${window.location.host}${context.path}`;
+
+	// queue up the notification for when olark is ready. If its ready this will execute right away.
+	olarkEvents.once( 'api.chat.onReady', () => olark.notifyLocation( location ) );
+
+	next();
+};
