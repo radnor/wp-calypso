@@ -3,6 +3,7 @@
  */
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
+
 /**
  * Internal dependencies
  */
