@@ -10,6 +10,7 @@ var express = require( 'express' ),
 var config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
+	ThemesReducers = require( 'lib/themes/reducers' ),
 	sections = require( '../../client/sections' );
 
 var HASH_LENGTH = 10,
