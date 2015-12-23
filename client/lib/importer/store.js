@@ -59,7 +59,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		case actionTypes.RESET_IMPORT:
 			// Remove the specified importer from the list of current importers
 			newState = state.update( 'importers', importers => {
-				return importers.filterNot( importer => importer.get( 'id' ) === action.importerId );
+				return importers.filterNot( importer => importer.get( 'importerId' ) === action.importerId );
 			} );
 			break;
 
@@ -99,7 +99,11 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			}
 
 			newState = newState
-				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
+				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) )
+				.update( 'importers', importers => {
+					return importers
+						.filterNot( importer => [ appStates.CANCEL_PENDING, appStates.DEFUNCT ].some( s => s === importer.get( 'importerState' ) ) )
+				} );
 			break;
 
 		case actionTypes.SET_UPLOAD_PROGRESS:
@@ -110,7 +114,7 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 
 		case actionTypes.START_IMPORT:
 			const newImporter = Immutable.fromJS( {
-				id: action.importerId,
+				importerId: action.importerId,
 				type: action.importerType,
 				importerState: appStates.READY_FOR_UPLOAD,
 				site: { ID: action.siteId }
