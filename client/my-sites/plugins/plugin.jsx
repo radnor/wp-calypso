@@ -60,6 +60,9 @@ export default React.createClass( {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsDataStore.removeListener( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
+		if ( this.pluginRefreshTimeout ) {
+			clearTimeout( this.pluginRefreshTimeout );
+		}
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -113,9 +116,8 @@ export default React.createClass( {
 
 	refreshSitesAndPlugins( nextProps ) {
 		this.setState( this.getSitesPlugin( nextProps ) );
-
 		// setTimeout to avoid React dispatch conflicts.
-		setTimeout( () => {
+		this.pluginRefreshTimeout = setTimeout( () => {
 			this.props.onPluginRefresh( this.translate( '%(pluginName)s Plugin', {
 				args: { pluginName: this.state.plugin ? this.state.plugin.name : this.props.pluginSlug },
 				textOnly: true,

@@ -94,7 +94,7 @@ function renderPluginList( context, basePath, siteUrl ) {
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
-	setTimeout( () => titleActions.setTitle( i18n.translate( 'Plugins', { textOnly: true } ), { siteID: siteUrl } ), 1 );
+	titleActions.setTitle( i18n.translate( 'Plugins', { textOnly: true } ), { siteID: siteUrl } );
 
 	// Render multiple plugins component
 	ReactDom.render(
