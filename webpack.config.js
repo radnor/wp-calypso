@@ -99,7 +99,7 @@ jsLoader = {
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
-		'webpack-dev-server/client?http://calypso.localhost:' + PORT,
+		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
 		path.join( __dirname, 'client', 'boot' )
 	];
