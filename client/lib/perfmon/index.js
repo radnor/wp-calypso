@@ -34,7 +34,7 @@ var perfmon = {
 			this.observeDomChanges( MutationObserver );
 		}
 	},
- 
+
  	// add listeners for various DOM events - scrolling, mutation and navigation
  	// and use these to trigger checks for visible placeholders (and, in the case of mutations,
  	// to record new placeholders and remove nodes that are no longer placeholders)
