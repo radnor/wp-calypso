@@ -64,14 +64,19 @@ export default React.createClass( {
 				return null;
 		}
 
+		const wordCount = textUtils.countWords( this.state.rawContent );
+
 		return (
 			<div className="editor-word-count">
-				{ this.translate( '%d words', { args: [ this.getCount() ] } ) }
+				{ this.translate(
+					'%d word',
+					'%d words',
+					{
+						count: wordCount,
+						args: [ wordCount ]
+					}
+				) }
 			</div>
 		);
-	},
-
-	getCount() {
-		return textUtils.countWords( this.state.rawContent );
 	}
 } );
