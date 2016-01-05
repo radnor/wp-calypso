@@ -54,6 +54,16 @@ function buildQuerystringNoPrefix( group, name ) {
 	return uriComponent;
 }
 
+var mostRecentUrlPath = null;
+
+window.addEventListener('popstate', function() {
+	console.log('popstate');
+});
+
+window.addEventListener('pushstate', function() {
+	console.log('pushstate');
+});
+
 var analytics = {
 
 	initialize: function( user, superProps ) {
@@ -90,8 +100,15 @@ var analytics = {
 	// pageView is a wrapper for pageview events across Tracks and GA
 	pageView: {
 		record: function( urlPath, pageTitle ) {
+			mostRecentUrlPath = urlPath;
 			analytics.tracks.recordPageView( urlPath );
 			analytics.ga.recordPageView( urlPath, pageTitle );
+		}
+	},
+
+	pageLoading: {
+		record: function( placeholderTime ) {
+			analytics.ga.recordPageTiming( mostRecentUrlPath, placeholderTime );
 		}
 	},
 
@@ -177,6 +194,16 @@ var analytics = {
 			if ( config( 'google_analytics_enabled' ) ) {
 				window.ga( 'send', 'event', category, action, label, value );
 			}
+		},
+
+		recordPageTiming: function( urlPath, placeholderTime ) {
+			analytics.ga.initialize();
+		
+			debug( 'Recording Timing ~ [URL: ' + urlPath + '] [Placeholder Time: ' + placeholderTime + ']' );
+
+			if ( config( 'google_analytics_enabled' ) ) {
+				window.ga( 'send', 'timing', urlPath, 'placeholder-wait', placeholderTime);
+			}	
 		}
 	},
 
