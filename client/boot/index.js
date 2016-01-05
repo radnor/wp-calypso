@@ -44,8 +44,6 @@ var config = require( 'config' ),
 	Layout,
 	LoggedOutLayout;
 
-
-
 function init() {
 	var i18nLocaleStringsObject = null;
 
