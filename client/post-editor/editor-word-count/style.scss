@@ -15,8 +15,4 @@
 	line-height: 1;
 	color: lighten( $gray, 10% );
 	cursor: default;
-
-	&:hover {
-		color: $gray;
-	}
 }
