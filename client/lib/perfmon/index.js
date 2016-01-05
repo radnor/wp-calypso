@@ -34,6 +34,77 @@ var perfmon = {
 			this.observeDomChanges( MutationObserver );
 		}
 	},
+ 
+ 	// add listeners for various DOM events - scrolling, mutation and navigation
+ 	// and use these to trigger checks for visible placeholders (and, in the case of mutations,
+ 	// to record new placeholders and remove nodes that are no longer placeholders)
+	observeDomChanges: function( MutationObserver ) {
+
+		// if anything scrolls, check if any of our placeholder elements are in view,
+		// but not more than a few times a second
+		window.addEventListener('scroll', debounce(this.checkForVisiblePlaceholders.bind( this, 'scroll' ), 200), true);
+
+		// if the user navigates, stop the current event and proceed to the next one
+		page( function( context, next ) {
+			// send "placeholder-wait-navigated" event
+			this.checkForVisiblePlaceholders( 'navigate' );
+			next();
+		}.bind( this ) );
+
+		// this is fired for matching mutations (childList and class attr changes)
+		var observer = new MutationObserver(function(mutations, observer) {
+			
+			// record all the nodes that match our placeholder classes in the "activePlaceholders" array
+			mutations.forEach( this.recordPlaceholders.bind( this ) );
+
+			// remove any nodes from activePlaceholders that are no longer placeholders
+			// check each node for:
+			// a. whether it's still in the DOM at all, and if so:
+			// b. whether it still has a placeholder class
+			var removed = remove( activePlaceholders, function( node ) {
+				return !OBSERVE_ROOT.contains( node ) || !this.isPlaceholder( node );
+			}.bind( this ) );
+
+			this.checkForVisiblePlaceholders( 'mutation' );
+
+		}.bind( this ) );
+
+		observer.observe(OBSERVE_ROOT, {
+		  subtree: true,
+		  attributes: true,
+		  childList: true,
+		  attributeFilter: ['class']
+		});
+	},
+
+	// check if there are any placeholders on the screen,
+	// and trigger a timing event when all the placeholders are gone or the user
+	// has navigated
+	checkForVisiblePlaceholders: function( trigger ) {
+
+		// determine how many placeholders are active in the viewport
+		var visibleCount = 0;
+		activePlaceholders.forEach( function( node ) {
+			if ( this.isElementVisibleInViewport( node ) ) {
+				visibleCount += 1;
+			}
+		}.bind( this ) );
+
+		// record event and reset timer if all placeholders are loaded OR user has just navigated
+		if ( placeholdersVisibleStart && ( visibleCount === 0 || trigger === 'navigate' ) ) {
+			// tell tracks to record duration
+			analytics.pageLoading.record( `placeholder-wait-${trigger}`, Date.now() - placeholdersVisibleStart );
+			placeholdersVisibleStart = null;
+		}
+
+		// if we can see placeholders, placeholdersVisibleStart is falsy, start the clock
+		if ( visibleCount > 0 && !placeholdersVisibleStart ) {
+			placeholdersVisibleStart = Date.now(); // TODO: performance.now()?
+		}
+
+		debug("Active placeholders: "+activePlaceholders.length);
+		debug("Visible in viewport: "+visibleCount);
+	},
 
 	isPlaceholder: function( node ) {
 		var className = node.className;
@@ -95,73 +166,6 @@ var perfmon = {
 			activePlaceholders.push(node);
 		}
 	},
- 
-	observeDomChanges: function( MutationObserver ) {
-
-		// if anything scrolls, check if any of our placeholder elements are in view,
-		// but not more than a few times a second
-		window.addEventListener('scroll', debounce(this.checkForVisiblePlaceholders.bind( this, 'scroll' ), 200), true);
-
-
-		// if the user navigates, stop the current event and proceed to the next one
-		page( function( context, next ) {
-			// send "placeholder-wait-navigated" event
-			this.checkForVisiblePlaceholders( 'navigate' );
-			next();
-		}.bind( this ) );
-
-
-		// this is fired for matching mutations (childList and class attr changes)
-		var observer = new MutationObserver(function(mutations, observer) {
-			
-			// record all the nodes that match our placeholder classes in the "activePlaceholders" array
-			mutations.forEach( this.recordPlaceholders.bind( this ) );
-
-			// remove any nodes from activePlaceholders that are no longer placeholders
-			// check each node for:
-			// a. whether it's still in the DOM at all, and if so:
-			// b. whether it still has a placeholder class
-			var removed = remove( activePlaceholders, function( node ) {
-				return !OBSERVE_ROOT.contains( node ) || !this.isPlaceholder( node );
-			}.bind( this ) );
-
-			this.checkForVisiblePlaceholders( 'mutation' );
-
-		}.bind( this ) );
-
-		observer.observe(OBSERVE_ROOT, {
-		  subtree: true,
-		  attributes: true,
-		  childList: true,
-		  attributeFilter: ['class']
-		});
-	},
-
-	checkForVisiblePlaceholders: function( trigger ) {
-
-		// determine how many placeholders are active in the viewport
-		var visibleCount = 0;
-		activePlaceholders.forEach( function( node ) {
-			if ( this.isElementVisibleInViewport( node ) ) {
-				visibleCount += 1;
-			}
-		}.bind( this ) );
-
-		// record event and reset timer if all placeholders are loaded OR user has just navigated
-		if ( placeholdersVisibleStart && ( visibleCount === 0 || trigger === 'navigate' ) ) {
-			// tell tracks to record duration
-			analytics.pageLoading.record( `placeholder-wait-${trigger}`, Date.now() - placeholdersVisibleStart );
-			placeholdersVisibleStart = null;
-		}
-
-		// if we can see placeholders, placeholdersVisibleStart is falsy, start the clock
-		if ( visibleCount > 0 && !placeholdersVisibleStart ) {
-			placeholdersVisibleStart = Date.now(); // TODO: performance.now()?
-		}
-
-		debug("Active placeholders: "+activePlaceholders.length);
-		debug("Visible in viewport: "+visibleCount);
-	}
 }
 
 module.exports = function() {
