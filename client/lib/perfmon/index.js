@@ -9,6 +9,7 @@ import analytics from 'analytics';
 import each from 'lodash/collection/each';
 import remove from 'lodash/array/remove';
 import debounce from 'lodash/function/debounce';
+import page from 'page';
 
 var debug = require( 'debug' )( 'calypso:perfmon' );
 
@@ -99,7 +100,16 @@ var perfmon = {
 
 		// if anything scrolls, check if any of our placeholder elements are in view,
 		// but not more than a few times a second
-		window.addEventListener('scroll', debounce(this.checkForVisiblePlaceholders.bind( this ), 200), true);
+		window.addEventListener('scroll', debounce(this.checkForVisiblePlaceholders.bind( this, 'scroll' ), 200), true);
+
+
+		// if the user navigates, stop the current event and proceed to the next one
+		page( function( context, next ) {
+			// send "placeholder-wait-navigated" event
+			this.checkForVisiblePlaceholders( 'navigate' );
+			next();
+		}.bind( this ) );
+
 
 		// this is fired for matching mutations (childList and class attr changes)
 		var observer = new MutationObserver(function(mutations, observer) {
@@ -115,7 +125,7 @@ var perfmon = {
 				return !OBSERVE_ROOT.contains( node ) || !this.isPlaceholder( node );
 			}.bind( this ) );
 
-			this.checkForVisiblePlaceholders();
+			this.checkForVisiblePlaceholders( 'mutation' );
 
 		}.bind( this ) );
 
@@ -127,11 +137,7 @@ var perfmon = {
 		});
 	},
 
-	checkForVisiblePlaceholders: function() {
-		// early exit if we know there aren't any placeholders
-		if ( activePlaceholders.length === 0 ) {
-			return;
-		}
+	checkForVisiblePlaceholders: function( trigger ) {
 
 		// determine how many placeholders are active in the viewport
 		var visibleCount = 0;
@@ -141,13 +147,16 @@ var perfmon = {
 			}
 		}.bind( this ) );
 
+		// record event and reset timer if all placeholders are loaded OR user has just navigated
+		if ( placeholdersVisibleStart && ( visibleCount === 0 || trigger === 'navigate' ) ) {
+			// tell tracks to record duration
+			analytics.pageLoading.record( `placeholder-wait-${trigger}`, Date.now() - placeholdersVisibleStart );
+			placeholdersVisibleStart = null;
+		}
+
 		// if we can see placeholders, placeholdersVisibleStart is falsy, start the clock
 		if ( visibleCount > 0 && !placeholdersVisibleStart ) {
 			placeholdersVisibleStart = Date.now(); // TODO: performance.now()?
-		} else if ( visibleCount === 0 && placeholdersVisibleStart ) {
-			// tell tracks to record duration
-			analytics.pageLoading.record( Date.now() - placeholdersVisibleStart );
-			placeholdersVisibleStart = null;
 		}
 
 		debug("Active placeholders: "+activePlaceholders.length);

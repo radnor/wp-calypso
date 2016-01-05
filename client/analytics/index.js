@@ -107,8 +107,8 @@ var analytics = {
 	},
 
 	pageLoading: {
-		record: function( placeholderTime ) {
-			analytics.ga.recordPageTiming( mostRecentUrlPath, placeholderTime );
+		record: function( eventType, placeholderTime ) {
+			analytics.ga.recordPageTiming( mostRecentUrlPath, eventType, placeholderTime );
 		}
 	},
 
@@ -196,13 +196,13 @@ var analytics = {
 			}
 		},
 
-		recordPageTiming: function( urlPath, placeholderTime ) {
+		recordPageTiming: function( urlPath, eventType, placeholderTime ) {
 			analytics.ga.initialize();
 		
 			debug( 'Recording Timing ~ [URL: ' + urlPath + '] [Placeholder Time: ' + placeholderTime + ']' );
 
 			if ( config( 'google_analytics_enabled' ) ) {
-				window.ga( 'send', 'timing', urlPath, 'placeholder-wait', placeholderTime);
+				window.ga( 'send', 'timing', urlPath, eventType, placeholderTime);
 			}	
 		}
 	},
