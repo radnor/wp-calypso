@@ -14,7 +14,8 @@ var debug = require( 'debug' )( 'calypso:perfmon' );
 
 const PLACEHOLDER_CLASSES = [
 	'placeholder',
-	'pulsing-dot is-active'
+	'pulsing-dot is-active',
+	'is-loading'
 ];
 
 const PLACEHOLDER_MATCHER = PLACEHOLDER_CLASSES.map(function(clazz) { return `[class*='${clazz}']`; }).join(', ');
@@ -35,14 +36,19 @@ var perfmon = {
 
 	isPlaceholder: function( node ) {
 		var className = node.className;
-		return className && PLACEHOLDER_CLASSES.some( function( clazz ) { 
+		return className && className.indexOf && PLACEHOLDER_CLASSES.some( function( clazz ) { 
 			return (className.indexOf( clazz ) >= 0); 
 		} );
 	},
 
 	// adapted from http://stackoverflow.com/questions/123999/how-to-tell-if-a-dom-element-is-visible-in-the-current-viewport/7557433#7557433
-	isElementInViewport: function( el ) {
-		var rect = el.getBoundingClientRect();
+	isElementVisibleInViewport: function( node ) {
+		var rect = node.getBoundingClientRect();
+
+		// discard if width or height are zero
+		if ( (rect.top - rect.bottom) === 0 || (rect.right - rect.left) === 0) {
+			return false;
+		}
 
 		return (
 			rect.top >= 0 &&
@@ -130,7 +136,7 @@ var perfmon = {
 		// determine how many placeholders are active in the viewport
 		var visibleCount = 0;
 		activePlaceholders.forEach( function( node ) {
-			if ( this.isElementInViewport( node ) ) {
+			if ( this.isElementVisibleInViewport( node ) ) {
 				visibleCount += 1;
 			}
 		}.bind( this ) );
