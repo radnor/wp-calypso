@@ -93,7 +93,9 @@ var perfmon = {
 		// record event and reset timer if all placeholders are loaded OR user has just navigated
 		if ( placeholdersVisibleStart && ( visibleCount === 0 || trigger === 'navigate' ) ) {
 			// tell tracks to record duration
-			analytics.pageLoading.record( `placeholder-wait-${trigger}`, Date.now() - placeholdersVisibleStart );
+			var duration = Date.now() - placeholdersVisibleStart;
+			debug(`Recording placeholder wait. Duration: ${duration}, Trigger: ${trigger}`);
+			analytics.pageLoading.record( `placeholder-wait-${trigger}`, duration );
 			placeholdersVisibleStart = null;
 		}
 
@@ -102,8 +104,11 @@ var perfmon = {
 			placeholdersVisibleStart = Date.now(); // TODO: performance.now()?
 		}
 
-		debug("Active placeholders: "+activePlaceholders.length);
-		debug("Visible in viewport: "+visibleCount);
+		// if there are placeholders hanging around, print some useful stats
+		if ( activePlaceholders.length > 0 ) {
+			debug("Active placeholders: "+activePlaceholders.length);
+			debug("Visible in viewport: "+visibleCount);
+		}
 	},
 
 	isPlaceholder: function( node ) {
