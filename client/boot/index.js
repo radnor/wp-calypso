@@ -186,8 +186,10 @@ function boot() {
 		layoutElement = React.createElement( LoggedOutLayout );
 	}
 
-	// Monitor time spent watching slowly-flashing divs
-	perfmon();
+	if ( config.isEnabled( 'perfmon' ) ) {
+		// Record time spent watching slowly-flashing divs
+		perfmon();
+	}
 
 	layout = renderWithReduxStore(
 		layoutElement,
