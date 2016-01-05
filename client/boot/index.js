@@ -36,6 +36,7 @@ var config = require( 'config' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
 	sections = require( 'sections' ),
 	touchDetect = require( 'lib/touch-detect' ),
+	setRouteAction = require( 'state/notices/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
 	createReduxStore = require( 'state' ).createReduxStore,
@@ -260,8 +261,10 @@ function boot() {
 		next();
 	} );
 
-	// clear notices
-	page( '*', require( 'notices' ).clearNoticesOnNavigation );
+	page( '*', function( context, next ) {
+		context.store.dispatch( setRouteAction( context.pathname ) );
+		next();
+	} );
 
 	if ( config.isEnabled( 'oauth' ) ) {
 		// Forces OAuth users to the /login page if no token is present
@@ -310,6 +313,10 @@ function boot() {
 	} );
 
 	require( 'my-sites' )();
+
+	// clear notices
+	//TODO: remove this one when notices are reduxified - it is for old notices
+	page( '*', require( 'notices' ).clearNoticesOnNavigation );
 
 	if ( config.isEnabled( 'olark' ) ) {
 		require( 'lib/olark' );
