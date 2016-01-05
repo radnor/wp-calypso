@@ -54,14 +54,14 @@ function buildQuerystringNoPrefix( group, name ) {
 	return uriComponent;
 }
 
+// we use this variable to track URL paths submitted to analytics.pageView.record
+// so that analytics.pageLoading.record can re-use the urlPath parameter.
+// this helps avoid some nasty coupling, but it's not the cleanest code - sorry.
 var mostRecentUrlPath = null;
 
 window.addEventListener('popstate', function() {
-	console.log('popstate');
-});
-
-window.addEventListener('pushstate', function() {
-	console.log('pushstate');
+	// throw away our URL value if the user used the back/forward buttons
+	mostRecentUrlPath = null;
 });
 
 var analytics = {
@@ -108,6 +108,7 @@ var analytics = {
 
 	pageLoading: {
 		record: function( placeholderTime ) {
+			console.log(`${mostRecentUrlPath} took ${placeholderTime}`);
 			analytics.ga.recordPageTiming( mostRecentUrlPath, placeholderTime );
 		}
 	},
