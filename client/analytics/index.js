@@ -108,7 +108,6 @@ var analytics = {
 
 	pageLoading: {
 		record: function( placeholderTime ) {
-			console.log(`${mostRecentUrlPath} took ${placeholderTime}`);
 			analytics.ga.recordPageTiming( mostRecentUrlPath, placeholderTime );
 		}
 	},
