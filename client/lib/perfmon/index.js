@@ -24,6 +24,7 @@ const OBSERVE_ROOT = document.getElementById('wpcom');
 
 let activePlaceholders = [];
 let placeholdersVisibleStart = null;
+let initialized = false;
 
 // add listeners for various DOM events - scrolling, mutation and navigation
 // and use these to trigger checks for visible placeholders (and, in the case of mutations,
@@ -160,9 +161,13 @@ function recordPlaceholderNode( node ) {
 }
 
 module.exports = function() {
-	var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+	if ( !initialized ) {
+		var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
-	if ( MutationObserver ) {
-		observeDomChanges( MutationObserver );
+		if ( MutationObserver ) {
+			observeDomChanges( MutationObserver );
+		}
+
+		initialized = true;
 	}
 };
