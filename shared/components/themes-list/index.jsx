@@ -47,14 +47,9 @@ var ThemesList = React.createClass( {
 		};
 	},
 
-	getThemeRef: function( theme ) {
-		return 'theme-' + theme.id;
-	},
-
 	renderTheme: function( theme, index ) {
-		var key = this.getThemeRef( theme );
-		return <Theme ref={ key }
-			key={ key }
+		return <Theme
+			key={ 'theme-' + theme.id }
 			buttonContents={ this.props.getButtonOptions( theme ) }
 			screenshotClickUrl={ this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme ) }
 			onScreenshotClick={ this.props.onScreenshotClick && this.props.onScreenshotClick.bind( null, theme, index ) }
