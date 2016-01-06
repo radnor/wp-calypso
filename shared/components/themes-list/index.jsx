@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	times = require( 'lodash/utility/times' );
+	times = require( 'lodash/utility/times' ),
+	isEqual = require( 'lodash/lang/isEqual' );
 
 /**
  * Internal dependencies
@@ -45,6 +46,11 @@ var ThemesList = React.createClass( {
 				return [];
 			},
 		};
+	},
+
+	shouldComponentUpdate: function( nextProps ) {
+		return this.props.loading !== nextProps.loading ||
+			! isEqual( this.props.themes, nextProps.themes );
 	},
 
 	renderTheme: function( theme, index ) {
