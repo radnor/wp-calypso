@@ -266,7 +266,11 @@ module.exports = React.createClass( {
 			menubar: false,
 			indent: false,
 
-			autoresize_min_height: document.documentElement.clientHeight,
+			// Try to find a suitable minimum size based on the viewport height
+			// minus the surrounding editor chrome to avoid scrollbars. In the
+			// future, we should calculate from the rendered editor bounds.
+			autoresize_min_height: Math.max( document.documentElement.clientHeight - 300, 300 ),
+
 			toolbar1: toolbar1.join(),
 			toolbar2: 'strikethrough,underline,hr,alignjustify,forecolor,pastetext,removeformat,wp_charmap,outdent,indent,undo,redo,wp_help',
 			toolbar3: '',

@@ -1,5 +1,25 @@
+.is-section-post::before {
+	content: '';
+	position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	background-color: $white;
+	pointer-events: none;
+	z-index: z-index( 'root', '.is-section-post::before' );
+}
+
 .is-section-post .wp-content {
 	padding: 0;
+}
+
+.is-section-post .email-verification-notice {
+	margin: 8px;
+
+	@include breakpoint( ">660px" ) {
+		margin: 0;
+	}
 }
 
 // Row of buttons
@@ -29,27 +49,26 @@
 	position: relative;
 }
 
-.is-section-post .email-verification-notice,
-.post-editor__content {
-	margin: 0;
-
-	@include breakpoint( ">660px" ) {
-		margin-left: ( $sidebar-width-min + 1 );
-	}
-
-	@include breakpoint( ">960px" ) {
-		margin-left: ( $sidebar-width-max + 1 );
-	}
-}
-
 .post-editor__content {
 	position: relative;
+	margin: 0;
 	backface-visibility: hidden;
 	perspective: 1000;
 
 	@include breakpoint( ">660px" ) {
 		backface-visibility: visible;
 		perspective: none;
+	}
+}
+
+.is-section-post .email-verification-notice,
+.post-editor__content {
+	@include breakpoint( ">660px" ) {
+		margin-left: ( $sidebar-width-min + 1 );
+	}
+
+	@include breakpoint( ">960px" ) {
+		margin-left: ( $sidebar-width-max + 1 );
 	}
 }
 
@@ -189,7 +208,6 @@ a.post-editor__close {
 // Component <Editor>
 .editor {
 	position: relative;
-	background-color: $white;
 }
 
 .editor .tinymce {
