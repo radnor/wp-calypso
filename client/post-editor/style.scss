@@ -239,6 +239,14 @@ a.post-editor__close {
 	width: 160px;
 	z-index: z-index( 'root', '.editor__switch-mode' );
 
+	.focus-sidebar & {
+		z-index: auto;
+
+		@include breakpoint( ">660px" ) {
+			z-index: z-index( 'root', '.editor__switch-mode' );
+		}
+	}
+
 	@include breakpoint( ">960px" ) {
 		right: 0;
 	}
