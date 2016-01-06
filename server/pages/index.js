@@ -4,7 +4,6 @@ var express = require( 'express' ),
 	qs = require( 'qs' ),
 	execSync = require( 'child_process' ).execSync,
 	cookieParser = require( 'cookie-parser' ),
-	i18nUtils = require( 'lib/i18n-utils' ),
 	debug = require( 'debug' )( 'calypso:pages' );
 
 var config = require( 'config' ),
@@ -183,6 +182,7 @@ function getDefaultContext( request ) {
 
 function renderLoggedOutRoute( req, res ) {
 	var context = getDefaultContext( req ),
+		i18nUtils = require( 'lib/i18n-utils' ),
 		language;
 
 	res.set( {
