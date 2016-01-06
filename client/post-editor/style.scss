@@ -68,6 +68,12 @@
 	}
 }
 
+.editor .mce-stack-layout-item .mce-container-body  {
+	@include breakpoint( "<960px" ) {
+		width: inherit;
+	}
+}
+
 .editor__header,
 .editor .mce-edit-area {
 	padding: 0 16px;
