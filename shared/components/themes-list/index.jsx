@@ -91,6 +91,8 @@ var ThemesList = React.createClass( {
 		}
 
 		let themes = this.props.themes.map( this.renderTheme );
+		themes.push( this.renderTrailingItems() );
+
 		return (
 			<div className="themes-list">
 				{ themes }
