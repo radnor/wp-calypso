@@ -144,10 +144,7 @@ function recordPlaceholders( mutation ) {
 		// only fires for the top element of an added subtree
 		if ( node.querySelectorAll ) {
 			// funky syntax because NodeList walks like an array but doesn't quack like one
-			Array.prototype.forEach.call(
-				node.querySelectorAll(PLACEHOLDER_MATCHER),
-				recordPlaceholderNode
-			);
+			each( node.querySelectorAll(PLACEHOLDER_MATCHER), recordPlaceholderNode );
 		}
 	} );
 }
