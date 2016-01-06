@@ -9,7 +9,7 @@ var React = require( 'react' ),
  */
 var Theme = require( 'components/theme' ),
 	EmptyContent = require( 'components/empty-content' ),
-	InfiniteList = require( 'components/infinite-list' ),
+	InfiniteScroll = require( 'lib/mixins/infinite-scroll' ),
 	ITEM_HEIGHT = require( 'lib/themes/constants' ).THEME_COMPONENT_HEIGHT,
 	PER_PAGE = require( 'lib/themes/constants' ).PER_PAGE;
 
@@ -17,6 +17,9 @@ var Theme = require( 'components/theme' ),
  * Component
  */
 var ThemesList = React.createClass( {
+
+	mixins: [ InfiniteScroll( 'fetchNextPage' ) ],
+
 	propTypes: {
 		themes: React.PropTypes.array.isRequired,
 		lastPage: React.PropTypes.bool.isRequired,
@@ -26,6 +29,10 @@ var ThemesList = React.createClass( {
 		getButtonOptions: React.PropTypes.func,
 		onScreenshotClick: React.PropTypes.func.isRequired,
 		onMoreButtonClick: React.PropTypes.func,
+	},
+
+	fetchNextPage: function( options ) {
+		this.props.fetchNextPage( options );
 	},
 
 	getDefaultProps: function() {
@@ -83,21 +90,11 @@ var ThemesList = React.createClass( {
 			return this.renderEmpty();
 		}
 
+		let themes = this.props.themes.map( this.renderTheme );
 		return (
-			<InfiniteList
-				key={ 'list' + this.props.search }
-				className="themes-list"
-				items={ this.props.themes }
-				lastPage={ this.props.lastPage }
-				fetchingNextPage={ this.props.loading }
-				guessedItemHeight={ ITEM_HEIGHT }
-				fetchNextPage={ this.props.fetchNextPage }
-				getItemRef={ this.getThemeRef }
-				renderItem={ this.renderTheme }
-				renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
-				renderTrailingItems={ this.renderTrailingItems }
-				itemsPerRow={ 2 }
-			/>
+			<div className="themes-list">
+				{ themes }
+			</div>
 		);
 	}
 } );
