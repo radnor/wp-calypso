@@ -73,7 +73,7 @@ var ThemeMoreButton = React.createClass( {
 						if ( option.url ) {
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
-									onMouseOver={ event => {
+									onMouseOver={ function( event ) {
 										event.target.focus();
 									} }
 									key={ option.label }
