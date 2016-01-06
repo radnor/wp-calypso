@@ -8,6 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var analytics = require( 'analytics' ),
+	Button = require( 'components/button' ),
 	productsValues = require( 'lib/products-values' ),
 	config = require( 'config' ),
 	isFreePlan = productsValues.isFreePlan,
@@ -31,6 +32,15 @@ module.exports = React.createClass( {
 		}
 
 		if ( this.siteHasThisPlan() ) {
+			if ( this.props.sitePlan.freeTrial ) {
+				return (
+					<Button
+						onClick={ this.handleAddToCart.bind( null, this.cartItem( { isFreeTrial: false } ), 'button' ) }
+						primary>
+						{ this.translate( 'Purchase Now' ) }
+					</Button>
+				);
+			}
 			return (
 				<div className="plan-actions__action-details">
 					<div className="plan-actions__current">
