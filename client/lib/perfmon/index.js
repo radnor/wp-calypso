@@ -71,12 +71,11 @@ function observeDomChanges( MutationObserver ) {
 // has navigated
 function checkForVisiblePlaceholders( trigger ) {
 	// determine how many placeholders are active in the viewport
-	var visibleCount = 0;
-	activePlaceholders.forEach( function( node ) {
-		if ( isElementVisibleInViewport( node ) ) {
-			visibleCount += 1;
-		}
-	} );
+	const visibleCount = activePlaceholders.reduce( 
+		function( count, node ) { 
+			return count + ( isElementVisibleInViewport( node ) ? 1 : 0 ); 
+		}, 0 
+	);
 
 	// record event and reset timer if all placeholders are loaded OR user has just navigated
 	if ( placeholdersVisibleStart && ( visibleCount === 0 || trigger === 'navigate' ) ) {
